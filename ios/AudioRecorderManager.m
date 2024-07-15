@@ -229,7 +229,7 @@ RCT_EXPORT_METHOD(prepareRecordingAtPath:(NSString *)path sampleRate:(float)samp
   if (_measurementMode) {
       [_recordSession setCategory:AVAudioSessionCategoryRecord error:nil];
       [_recordSession setMode:AVAudioSessionModeMeasurement error:nil];
-  }else{
+  } else {
       [_recordSession setCategory:AVAudioSessionCategoryMultiRoute error:nil];
   }
 
@@ -254,6 +254,10 @@ RCT_EXPORT_METHOD(startRecording)
   [self startProgressTimer];
   [_recordSession setActive:YES error:nil];
   [_audioRecorder record];
+
+  if ([[_recordSession availableInputs] count] < 1) {
+    [[NSNotificationCenter defaultCenter] postNotificationName: @"ProjectoNoMicrophoneConnectedError" object:nil userInfo:nil];
+  }
 }
 
 RCT_EXPORT_METHOD(stopRecording)
